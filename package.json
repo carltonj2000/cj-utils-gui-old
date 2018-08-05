@@ -12,9 +12,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "start": "concurrently \"cross-env BROWSER=none yarn react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
+    "start":
+      "concurrently \"cross-env BROWSER=none yarn react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
     "pack": "electron-builder --dir",
-    "dist": "npx build --x64 --macos --win --linux --c.extraMetadata.main=build/electron.js -p always"
+    "dist": "npx build --x64 --macos --c.extraMetadata.main=build/electron.js",
+    "dist-ori":
+      "npx build --x64 --macos --win --linux --c.extraMetadata.main=build/electron.js -p always"
   },
   "devDependencies": {
     "concurrently": "^3.6.1",
@@ -31,9 +34,9 @@
   "homepage": "./",
   "main": "public/electron.js",
   "build": {
-    "appId": "com.your-domain",
+    "appId": "com.carltonjoseph",
     "compression": "normal",
-    "productName": "Example",
+    "productName": "cj-utils",
     "directories": {
       "buildResources": "build",
       "output": "dist"
@@ -41,16 +44,7 @@
     "mac": {
       "icon": "assets/icon.icns",
       "type": "distribution",
-      "target": [
-        "pkg",
-        "dmg",
-        "mas"
-      ],
-      "publish": {
-        "provider": "s3",
-        "bucket": "example-releases",
-        "path": "releases"
-      },
+      "target": ["pkg", "dmg"],
       "category": "public.app-category.news"
     },
     "mas": {
@@ -69,10 +63,7 @@
     },
     "linux": {
       "icon": "assets/icon.png",
-      "target": [
-        "snap",
-        "AppImage"
-      ],
+      "target": ["snap", "AppImage"],
       "description": "Example",
       "category": "Network;Feed",
       "publish": {
@@ -81,5 +72,16 @@
         "path": "releases"
       }
     }
+  },
+  "comment": {
+    "note0": "removed from the build object",
+    "note1": "removed from mac object to stop publishing",
+    "publish": {
+      "provider": "s3",
+      "bucket": "example-releases",
+      "path": "releases"
+    },
+    "note2": "removed from mac object to stop mas build",
+    "target": ["pkg", "dmg", "mas"]
   }
 }

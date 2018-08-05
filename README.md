@@ -15,3 +15,11 @@ build script that might reference these packages:
 | --------------------- | -------------------------------------------------- |
 | electron-publisher-s3 | Don't plan on using S3                             |
 | react-dev-utils       | Apparently already installed with create-react-app |
+
+# Notes
+
+Create Mac Icon via:
+
+```
+sips -s format icns icon.png --out icon.icns
+```
