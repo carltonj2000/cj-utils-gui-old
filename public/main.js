@@ -18,7 +18,6 @@ createWindow = () => {
     backgroundColor: "#F7F7F7",
     minWidth: 880,
     show: false,
-    titleBarStyle: "hidden",
     webPreferences: {
       nodeIntegration: false,
       preload: __dirname + "/preload.js"
@@ -29,7 +28,7 @@ createWindow = () => {
 
   mainWindow.loadURL(
     isDev
-      ? "http://localhost:3000"
+      ? "http://localhost:3210"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
@@ -58,8 +57,8 @@ createWindow = () => {
   }
 
   mainWindow.once("ready-to-show", () => {
+    mainWindow.webContents.openDevTools();
     mainWindow.show();
-
     ipcMain.on("open-external-window", (event, arg) => {
       shell.openExternal(arg);
     });
@@ -110,7 +109,7 @@ generateMenu = () => {
         {
           click() {
             require("electron").shell.openExternal(
-              "https://getstream.io/winds"
+              "https://github.com/carltonj2000/cj-utils"
             );
           },
           label: "Learn More"
@@ -118,7 +117,7 @@ generateMenu = () => {
         {
           click() {
             require("electron").shell.openExternal(
-              "https://github.com/GetStream/Winds/issues"
+              "https://github.com/carltonj2000/cj-utils/issues"
             );
           },
           label: "File Issue on GitHub"
@@ -147,4 +146,11 @@ app.on("activate", () => {
 
 ipcMain.on("load-page", (event, arg) => {
   mainWindow.loadURL(arg);
+});
+
+ipcMain.on("get:dir", () => {
+  const dirs = dialog.showOpenDialog(mainWindow, {
+    properties: ["openDirectory"]
+  });
+  if (dirs && dirs.length > 0) mainWindow.webContents.send("set:dir", dirs[0]);
 });

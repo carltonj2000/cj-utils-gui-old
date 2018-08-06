@@ -1,21 +1,43 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
+
+// const { ipcRenderer } = require("electron");
+// const { ipcRenderer } = window.require("electron");
 
 class App extends Component {
   render() {
+    const { path } = this.state;
+    console.log(window.require);
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React And Electron</h1>
+          <h1 className="App-title">Carlton's Utilities</h1>
         </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <form>
+          <div>
+            <label htmlFor="item">Directory:</label>
+            <input type="text" id="item" autoFocus value={path} size="80" />
+          </div>
+          <button type="submit" onClick={this.onClick}>
+            Choose Directory
+          </button>
+        </form>
       </div>
     );
   }
+  state = { path: "" };
+  /*
+  componentDidMount = () => {
+    ipcRenderer.on("set:dir", (e, item) => {
+      this.setState({ path: item });
+    });
+  };
+
+  onClick = e => {
+    e.preventDefault();
+    ipcRenderer.send("get:dir");
+  };
+  */
 }
 
 export default App;

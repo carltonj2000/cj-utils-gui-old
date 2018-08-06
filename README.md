@@ -2,6 +2,8 @@
 
 Desktop utilities code with Electron and React.
 
+Use `yarn build` and `yarn dist` to generate the dmg in the dist folder.
+
 # History
 
 The original code in this repository is based on
