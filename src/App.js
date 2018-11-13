@@ -1,17 +1,12 @@
-import React, { Component } from "react";
-import "./App.css";
-
-// const { ipcRenderer } = require("electron");
-// const { ipcRenderer } = window.require("electron");
+import React, { Component, Fragment } from "react";
 
 class App extends Component {
   render() {
     const { path } = this.state;
-    console.log(window.require);
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Carlton's Utilities</h1>
+      <Fragment>
+        <header>
+          <h1>Carlton's Utilities</h1>
         </header>
         <form>
           <div>
@@ -22,22 +17,21 @@ class App extends Component {
             Choose Directory
           </button>
         </form>
-      </div>
+      </Fragment>
     );
   }
   state = { path: "" };
-  /*
+
   componentDidMount = () => {
-    ipcRenderer.on("set:dir", (e, item) => {
+    window.ipcRenderer.on("set:dir", (e, item) => {
       this.setState({ path: item });
     });
   };
 
   onClick = e => {
     e.preventDefault();
-    ipcRenderer.send("get:dir");
+    window.ipcRenderer.send("get:dir");
   };
-  */
 }
 
 export default App;

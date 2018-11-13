@@ -4,7 +4,8 @@ const {
   shell,
   ipcMain,
   Menu,
-  TouchBar
+  TouchBar,
+  dialog
 } = require("electron");
 const { TouchBarButton, TouchBarLabel, TouchBarSpacer } = TouchBar;
 
@@ -12,6 +13,7 @@ const path = require("path");
 const isDev = require("electron-is-dev");
 
 let mainWindow;
+process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
 createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -132,6 +134,7 @@ generateMenu = () => {
 app.on("ready", () => {
   createWindow();
   generateMenu();
+  console.log("cwd", process.cwd());
 });
 
 app.on("window-all-closed", () => {
