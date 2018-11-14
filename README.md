@@ -6,6 +6,10 @@ Use `yarn build` and `yarn dist` to generate the dmg in the dist folder.
 
 # History
 
+The material-ui code fragments are based off
+[this](https://medium.com/codingthesmartway-com-blog/getting-started-with-material-ui-for-react-material-design-for-react-364b2688b555)
+article.
+
 The original code in this repository is based on
 [Takeaways on Building a React Based App with Electron](https://hackernoon.com/publishing-a-react-based-app-with-electron-and-nodejs-f5ec44169366)
 article.
