@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
 class Photos extends Component {
-  state = { path: "tbd" };
+  state = { path: "tbd", error: null };
   render() {
     return (
       <Card>
@@ -26,28 +26,51 @@ class Photos extends Component {
               {this.state.path}
             </Typography>
           </div>
+          {this.state.error && (
+            <Typography color="secondary" variant="h6" component="h6">
+              {this.state.error}
+            </Typography>
+          )}
         </CardContent>
         <CardActions>
-          <Button size="small" color="primary" onClick={this.onClick}>
+          <Button size="small" color="primary" onClick={this.onSelectDirectory}>
             Change Selected Directory
           </Button>
-          <Button size="small" color="primary">
+          <Button size="small" color="primary" onClick={this.onProcessPhotos}>
             Process Photos
           </Button>
+          {this.state.error && (
+            <Button size="small" color="secondary" onClick={this.onClearError}>
+              Clear Error
+            </Button>
+          )}
         </CardActions>
       </Card>
     );
   }
 
   componentDidMount = () => {
-    window.ipcRenderer.on("set:dir", (e, item) => {
+    window.ipcRenderer.on("photos:set:dir", (e, item) => {
       this.setState({ path: item });
+    });
+    window.ipcRenderer.on("photos:error", (e, error) => {
+      this.setState({ error });
     });
   };
 
-  onClick = e => {
+  onSelectDirectory = e => {
     e.preventDefault();
-    window.ipcRenderer.send("get:dir");
+    window.ipcRenderer.send("photos:get:dir");
+  };
+
+  onProcessPhotos = e => {
+    e.preventDefault();
+    window.ipcRenderer.send("photos:process", this.state.path);
+  };
+
+  onClearError = e => {
+    e.preventDefault();
+    this.setState({ error: null });
   };
 }
 

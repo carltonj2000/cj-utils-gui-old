@@ -12,11 +12,14 @@ const { TouchBarButton, TouchBarLabel, TouchBarSpacer } = TouchBar;
 const path = require("path");
 const isDev = require("electron-is-dev");
 
+const photos = require("./photos");
+
 let mainWindow;
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
 createWindow = () => {
   mainWindow = new BrowserWindow({
+    title: "cj-utils",
     backgroundColor: "#F7F7F7",
     minWidth: 880,
     show: false,
@@ -71,39 +74,8 @@ generateMenu = () => {
   const template = [
     {
       label: "File",
+      role: "File",
       submenu: [{ role: "about" }, { role: "quit" }]
-    },
-    {
-      label: "Edit",
-      submenu: [
-        { role: "undo" },
-        { role: "redo" },
-        { type: "separator" },
-        { role: "cut" },
-        { role: "copy" },
-        { role: "paste" },
-        { role: "pasteandmatchstyle" },
-        { role: "delete" },
-        { role: "selectall" }
-      ]
-    },
-    {
-      label: "View",
-      submenu: [
-        { role: "reload" },
-        { role: "forcereload" },
-        { role: "toggledevtools" },
-        { type: "separator" },
-        { role: "resetzoom" },
-        { role: "zoomin" },
-        { role: "zoomout" },
-        { type: "separator" },
-        { role: "togglefullscreen" }
-      ]
-    },
-    {
-      role: "window",
-      submenu: [{ role: "minimize" }, { role: "close" }]
     },
     {
       role: "help",
@@ -134,7 +106,6 @@ generateMenu = () => {
 app.on("ready", () => {
   createWindow();
   generateMenu();
-  console.log("cwd", process.cwd());
 });
 
 app.on("window-all-closed", () => {
@@ -151,9 +122,20 @@ ipcMain.on("load-page", (event, arg) => {
   mainWindow.loadURL(arg);
 });
 
-ipcMain.on("get:dir", () => {
+ipcMain.on("photos:get:dir", () => {
   const dirs = dialog.showOpenDialog(mainWindow, {
     properties: ["openDirectory"]
   });
-  if (dirs && dirs.length > 0) mainWindow.webContents.send("set:dir", dirs[0]);
+  if (dirs && dirs.length > 0)
+    mainWindow.webContents.send("photos:set:dir", dirs[0]);
+});
+
+ipcMain.on("photos:process", (e, cwd) => {
+  photos
+    .develope(cwd)
+    .then(r => console.log(r))
+    .catch(e => {
+      mainWindow.webContents.send("photos:error", e);
+      console.log(e);
+    });
 });
