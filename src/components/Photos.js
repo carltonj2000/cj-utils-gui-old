@@ -6,7 +6,13 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
 class Photos extends Component {
-  state = { path: "tbd", error: null };
+  state = {
+    path: "/Users/carltonjoseph/Pictures/149_1025",
+    error: null,
+    total: 0,
+    extractRaw: 0,
+    convert: 0
+  };
   render() {
     return (
       <Card>
@@ -26,11 +32,21 @@ class Photos extends Component {
               {this.state.path}
             </Typography>
           </div>
-          {this.state.error && (
+          {this.state.error ? (
             <Typography color="secondary" variant="h6" component="h6">
               {this.state.error}
             </Typography>
-          )}
+          ) : null}
+          {this.state.total ? (
+            <Typography color="primary" variant="h6" component="h6">
+              Raw Extracted: {this.state.extractRaw} / {this.state.total}
+            </Typography>
+          ) : null}
+          {this.state.total ? (
+            <Typography color="primary" variant="h6" component="h6">
+              Resized: {this.state.convert} / {this.state.total}
+            </Typography>
+          ) : null}
         </CardContent>
         <CardActions>
           <Button size="small" color="primary" onClick={this.onSelectDirectory}>
@@ -53,9 +69,19 @@ class Photos extends Component {
     window.ipcRenderer.on("photos:set:dir", (e, item) => {
       this.setState({ path: item });
     });
-    window.ipcRenderer.on("photos:error", (e, error) => {
-      this.setState({ error });
-    });
+    window.ipcRenderer.on("photos:error", (e, error) =>
+      this.setState({ error })
+    );
+    window.ipcRenderer.on("photos:status:total", (e, total) =>
+      this.setState({ total })
+    );
+    window.ipcRenderer.on("photos:status:extractRaw", (e, extractRaw) =>
+      this.setState({ extractRaw })
+    );
+    window.ipcRenderer.on(
+      "photos:status:convert",
+      (e, convert) => console.log(convert) || this.setState({ convert })
+    );
   };
 
   onSelectDirectory = e => {

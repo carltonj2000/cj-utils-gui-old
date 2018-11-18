@@ -132,10 +132,14 @@ ipcMain.on("photos:get:dir", () => {
 
 ipcMain.on("photos:process", (e, cwd) => {
   photos
-    .develope(cwd)
+    .develope(
+      cwd,
+      t => mainWindow.webContents.send("photos:status:total", t),
+      r => mainWindow.webContents.send("photos:status:extractRaw", r),
+      c => mainWindow.webContents.send("photos:status:convert", c)
+    )
     .then(r => console.log(r))
-    .catch(e => {
-      mainWindow.webContents.send("photos:error", e);
-      console.log(e);
-    });
+    .catch(
+      e => console.log(e) || mainWindow.webContents.send("photos:error", e)
+    );
 });
