@@ -121,7 +121,9 @@ app.on("activate", () => {
 ipcMain.on("load-page", (event, arg) => {
   mainWindow.loadURL(arg);
 });
-
+ipcMain.on("photos:gui:ready", () =>
+  mainWindow.webContents.send("photos:set:dir", process.cwd())
+);
 ipcMain.on("photos:get:dir", () => {
   const dirs = dialog.showOpenDialog(mainWindow, {
     properties: ["openDirectory"]

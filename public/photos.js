@@ -7,6 +7,11 @@ const bin =
     ? "/usr/local/Cellar/dcraw/9.27.0_2/bin/dcraw"
     : "/usr/bin/dcraw";
 
+const bin2 =
+  process.platform === "darwin"
+    ? "/usr/local/bin/convert"
+    : "/usr/local/bin/convert";
+
 const develope = (cwd, size, total, extractRaw, convert) =>
   new Promise((resolve, reject) => {
     try {
@@ -47,7 +52,7 @@ const develope = (cwd, size, total, extractRaw, convert) =>
         let p = new Promise(resolve => resolve());
         images.forEach(image => {
           const file = image + ".JPG";
-          const cmd = `convert "${path.join(
+          const cmd = `${bin2} "${path.join(
             jpgDir,
             file
           )}" -resize ${size} "${path.join(dst, file)}"`;

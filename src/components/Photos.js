@@ -139,6 +139,7 @@ class Photos extends Component {
     );
     if (debug)
       this.setState({ path: "/Users/carltonjoseph/Pictures/156_1118" });
+    window.ipcRenderer.send("photos:gui:ready");
   };
 
   onSelectDirectory = e => window.ipcRenderer.send("photos:get:dir");
