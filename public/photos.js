@@ -1,13 +1,13 @@
 const path = require("path");
 const fs = require("fs");
-const { execSync } = require("child_process");
+const { execSync, exec } = require("child_process");
 
 const bin =
   process.platform === "darwin"
     ? "/usr/local/Cellar/dcraw/9.27.0_2/bin/dcraw"
     : "/usr/bin/dcraw";
 
-const develope = (cwd, total, extractRaw, convert) =>
+const develope = (cwd, size, total, extractRaw, convert) =>
   new Promise((resolve, reject) => {
     try {
       if (!fs.existsSync(cwd))
@@ -26,23 +26,56 @@ const develope = (cwd, total, extractRaw, convert) =>
         total(rawFiles.length);
         fs.mkdirSync(rawDir);
         fs.mkdirSync(jpgDir);
+
+        const images = [];
         rawFiles.forEach((file, idx) => {
           execSync(`${bin} -e ${file}`, { cwd });
           fs.renameSync(path.join(cwd, file), path.join(rawDir, file));
           const baseName = file.split(".")[0];
+          images.push(baseName);
           fs.renameSync(
             path.join(cwd, baseName + ".thumb.jpg"),
             path.join(jpgDir, baseName + ".JPG")
           );
           extractRaw(idx + 1);
         });
-        return resolve(`processing photos in ${cwd}`);
+        const dst = path.join(cwd, "resized", "size_" + size);
+        if (fs.existsSync(dst))
+          return reject(`resize directory already exist => ${dst}`);
+        execSync(`mkdir -p ${dst}`);
+
+        let p = new Promise(resolve => resolve());
+        images.forEach(image => {
+          const file = image + ".JPG";
+          const cmd = `convert "${path.join(
+            jpgDir,
+            file
+          )}" -resize ${size} "${path.join(dst, file)}"`;
+          p = p.then(
+            () =>
+              new Promise((resolve, reject) => {
+                exec(cmd, (err, stdout, stderr) => {
+                  if (err) return reject(err);
+                  convert(1);
+                  return resolve();
+                });
+              })
+          );
+        });
+        p = p.catch(e => reject(e));
+        p = p.then(() => resolve(`finished processing photos in ${cwd}`));
       }
     } catch (e) {
-      e => reject(e.messsage);
+      console.log("e1", e);
+      return reject(e.Error);
     }
   });
 
+const reset = cwd => {
+  execSync(`rm -rf ${cwd}`);
+  execSync(`cp -R ${cwd}ori ${cwd}`);
+};
 module.exports = {
-  develope
+  develope,
+  reset
 };

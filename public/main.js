@@ -62,7 +62,7 @@ createWindow = () => {
   }
 
   mainWindow.once("ready-to-show", () => {
-    mainWindow.webContents.openDevTools();
+    if (isDev) mainWindow.webContents.openDevTools();
     mainWindow.show();
     ipcMain.on("open-external-window", (event, arg) => {
       shell.openExternal(arg);
@@ -129,17 +129,18 @@ ipcMain.on("photos:get:dir", () => {
   if (dirs && dirs.length > 0)
     mainWindow.webContents.send("photos:set:dir", dirs[0]);
 });
-
-ipcMain.on("photos:process", (e, cwd) => {
+ipcMain.on("photos:reset", (e, cwd) => photos.reset(cwd));
+ipcMain.on("photos:process", (e, cwd, resolution) => {
   photos
     .develope(
       cwd,
+      resolution,
       t => mainWindow.webContents.send("photos:status:total", t),
       r => mainWindow.webContents.send("photos:status:extractRaw", r),
       c => mainWindow.webContents.send("photos:status:convert", c)
     )
-    .then(r => console.log(r))
+    .then(() => mainWindow.webContents.send("photos:status:finished"))
     .catch(
-      e => console.log(e) || mainWindow.webContents.send("photos:error", e)
+      e => console.log("e", e) || mainWindow.webContents.send("photos:error", e)
     );
 });
