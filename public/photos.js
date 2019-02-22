@@ -3,9 +3,7 @@ const fs = require("fs");
 const { execSync, exec } = require("child_process");
 
 const bin =
-  process.platform === "darwin"
-    ? "/usr/local/Cellar/dcraw/9.27.0_2/bin/dcraw"
-    : "/usr/bin/dcraw";
+  process.platform === "darwin" ? "/usr/local/bin/dcraw" : "/usr/bin/dcraw";
 
 const bin2 =
   process.platform === "darwin"
