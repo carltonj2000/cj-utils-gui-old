@@ -12,6 +12,8 @@ import Select from "@material-ui/core/Select";
 import Input from "@material-ui/core/Input";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
+const debug = true;
+
 const styles = theme => ({
   formControl: {
     margin: theme.spacing.unit,
@@ -28,8 +30,6 @@ const styles = theme => ({
     margin: theme.spacing.unit * 2
   }
 });
-
-const debug = false;
 
 class Photos extends Component {
   state = {
@@ -119,7 +119,8 @@ class Photos extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
   componentDidMount = () => {
-    window.ipcRenderer.on("photos:set:dir", (e, item) => {
+    window.ipcRenderer.on("photos:set:dir", (e, item, arg) => {
+      if (debug) item = "/Users/carltonjoseph/160_1212";
       this.setState({ path: item });
     });
     window.ipcRenderer.on("photos:error", (e, error) =>
@@ -137,8 +138,6 @@ class Photos extends Component {
     window.ipcRenderer.on("photos:status:finished", () =>
       this.setState({ running: false })
     );
-    if (debug)
-      this.setState({ path: "/Users/carltonjoseph/Pictures/156_1118" });
     window.ipcRenderer.send("photos:gui:ready");
   };
 

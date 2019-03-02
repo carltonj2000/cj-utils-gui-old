@@ -2,10 +2,10 @@ const path = require("path");
 const fs = require("fs");
 const { execSync, exec } = require("child_process");
 
-const bin =
+const dcraw =
   process.platform === "darwin" ? "/usr/local/bin/dcraw" : "/usr/bin/dcraw";
 
-const bin2 =
+const convert =
   process.platform === "darwin"
     ? "/usr/local/bin/convert"
     : "/usr/local/bin/convert";
@@ -32,7 +32,7 @@ const develope = (cwd, size, total, extractRaw, convert) =>
 
         const images = [];
         rawFiles.forEach((file, idx) => {
-          execSync(`${bin} -e ${file}`, { cwd });
+          execSync(`${dcraw} -e ${file}`, { cwd });
           fs.renameSync(path.join(cwd, file), path.join(rawDir, file));
           const baseName = file.split(".")[0];
           images.push(baseName);
@@ -50,7 +50,7 @@ const develope = (cwd, size, total, extractRaw, convert) =>
         let p = new Promise(resolve => resolve());
         images.forEach(image => {
           const file = image + ".JPG";
-          const cmd = `${bin2} "${path.join(
+          const cmd = `${convert} "${path.join(
             jpgDir,
             file
           )}" -resize ${size} "${path.join(dst, file)}"`;
