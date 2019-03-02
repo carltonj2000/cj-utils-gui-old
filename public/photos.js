@@ -75,9 +75,14 @@ const develope = (cwd, size, total, extractRaw, convert) =>
   });
 
 const reset = cwd => {
-  execSync(`rm -rf ${cwd}`);
-  execSync(`cp -R ${cwd}ori ${cwd}`);
+  if (fs.existsSync(`${cwd}ori`)) {
+    execSync(`rm -rf ${cwd}`);
+    execSync(`cp -R ${cwd}ori ${cwd}`);
+  } else {
+    alert(`Failed! Missing ${cwd}ori.`);
+  }
 };
+
 module.exports = {
   develope,
   reset
