@@ -132,14 +132,16 @@ ipcMain.on("photos:get:dir", () => {
     mainWindow.webContents.send("photos:set:dir", dirs[0]);
 });
 const t = ti => mainWindow.webContents.send("photos:status:total", ti);
+const tj = tji => mainWindow.webContents.send("photos:status:jpegtotal", tji);
 const r = ri => mainWindow.webContents.send("photos:status:extractRaw", ri);
+const j = ji => mainWindow.webContents.send("photos:status:jpeg", ji);
 const c = ci => mainWindow.webContents.send("photos:status:convert", ci);
 const errMsg = ei => mainWindow.webContents.send("photos:error", ei);
 
-ipcMain.on("photos:reset", (e, cwd) => photos.reset(cwd, t, r, c));
+ipcMain.on("photos:reset", (e, cwd) => photos.reset(cwd, t, r, c, tj, j));
 ipcMain.on("photos:process", (e, cwd, resolution) =>
   photos
-    .develope(cwd, resolution, t, r, c)
+    .develope(cwd, resolution, t, r, c, tj, j)
     .then(() => mainWindow.webContents.send("photos:status:finished"))
     .catch(err => errMsg(err))
 );

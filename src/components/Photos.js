@@ -12,7 +12,7 @@ import Select from "@material-ui/core/Select";
 import Input from "@material-ui/core/Input";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-const debug = true;
+const debug = false;
 
 const styles = theme => ({
   formControl: {
@@ -36,7 +36,9 @@ class Photos extends Component {
     path: "",
     error: null,
     total: 0,
+    jpegtotal: 0,
     extractRaw: 0,
+    jpeg: 0,
     convert: 0,
     resolution: "1620x1080",
     running: false
@@ -47,7 +49,7 @@ class Photos extends Component {
       <Card>
         <CardContent>
           <Typography gutterBottom variant="headline" component="h2">
-            Raw Photo Processing
+            Photo Processing
           </Typography>
           <div>
             <Typography className={classes.label} variant="h6" component="h6">
@@ -68,12 +70,13 @@ class Photos extends Component {
           ) : null}
           {this.state.total ? (
             <Typography color="primary">
-              Raw Extracted: {this.state.extractRaw} / {this.state.total}
+              RAW Extracted: {this.state.extractRaw} / {this.state.total},
+              resized: {this.state.convert} / {this.state.total}
             </Typography>
           ) : null}
-          {this.state.total ? (
+          {this.state.jpegtotal ? (
             <Typography color="primary">
-              Resized: {this.state.convert} / {this.state.total}
+              JPEG resized: {this.state.jpeg} / {this.state.jpegtotal}
             </Typography>
           ) : null}
           {this.state.running ? (
@@ -129,13 +132,17 @@ class Photos extends Component {
     window.ipcRenderer.on("photos:status:total", (e, total) =>
       this.setState({ total })
     );
-    window.ipcRenderer.on(
-      "photos:status:extractRaw",
-      (e, extractRaw) =>
-        console.log("extractRaw", extractRaw) || this.setState({ extractRaw })
+    window.ipcRenderer.on("photos:status:extractRaw", (e, extractRaw) =>
+      this.setState({ extractRaw })
     );
     window.ipcRenderer.on("photos:status:convert", (e, convert) =>
       this.setState(state => ({ convert: state.convert + convert }))
+    );
+    window.ipcRenderer.on("photos:status:jpeg", (e, jpeg) =>
+      this.setState(state => ({ jpeg: state.jpeg + jpeg }))
+    );
+    window.ipcRenderer.on("photos:status:jpegtotal", (e, jpegtotal) =>
+      this.setState(state => ({ jpegtotal }))
     );
     window.ipcRenderer.on("photos:status:finished", () =>
       this.setState({ running: false })
