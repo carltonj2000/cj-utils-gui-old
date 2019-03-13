@@ -131,18 +131,15 @@ ipcMain.on("photos:get:dir", () => {
   if (dirs && dirs.length > 0)
     mainWindow.webContents.send("photos:set:dir", dirs[0]);
 });
-ipcMain.on("photos:reset", (e, cwd) => photos.reset(cwd));
-ipcMain.on("photos:process", (e, cwd, resolution) => {
+const t = ti => mainWindow.webContents.send("photos:status:total", ti);
+const r = ri => mainWindow.webContents.send("photos:status:extractRaw", ri);
+const c = ci => mainWindow.webContents.send("photos:status:convert", ci);
+const errMsg = ei => mainWindow.webContents.send("photos:error", ei);
+
+ipcMain.on("photos:reset", (e, cwd) => photos.reset(cwd, t, r, c));
+ipcMain.on("photos:process", (e, cwd, resolution) =>
   photos
-    .develope(
-      cwd,
-      resolution,
-      t => mainWindow.webContents.send("photos:status:total", t),
-      r => mainWindow.webContents.send("photos:status:extractRaw", r),
-      c => mainWindow.webContents.send("photos:status:convert", c)
-    )
+    .develope(cwd, resolution, t, r, c)
     .then(() => mainWindow.webContents.send("photos:status:finished"))
-    .catch(
-      e => console.log("e", e) || mainWindow.webContents.send("photos:error", e)
-    );
-});
+    .catch(err => errMsg(err))
+);

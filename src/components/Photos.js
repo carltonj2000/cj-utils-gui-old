@@ -129,8 +129,10 @@ class Photos extends Component {
     window.ipcRenderer.on("photos:status:total", (e, total) =>
       this.setState({ total })
     );
-    window.ipcRenderer.on("photos:status:extractRaw", (e, extractRaw) =>
-      this.setState({ extractRaw })
+    window.ipcRenderer.on(
+      "photos:status:extractRaw",
+      (e, extractRaw) =>
+        console.log("extractRaw", extractRaw) || this.setState({ extractRaw })
     );
     window.ipcRenderer.on("photos:status:convert", (e, convert) =>
       this.setState(state => ({ convert: state.convert + convert }))
