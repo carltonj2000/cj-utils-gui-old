@@ -81,7 +81,6 @@ const develope = (
           new Promise(resolve => {
             const ori = path.join(cwd, file);
             const mved = path.join(jpgDir, file);
-            console.log("ori mved", ori, mved);
             fs.renameSync(ori, mved);
             const cmd = `${convert} "${mved}" -resize ${size} "${path.join(
               resizeDir,
@@ -90,7 +89,6 @@ const develope = (
 
             exec(cmd, () => {
               jpeg(1);
-              console.log("converted");
               return resolve();
             });
           })
